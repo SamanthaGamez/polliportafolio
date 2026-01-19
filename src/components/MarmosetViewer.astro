@@ -1,0 +1,204 @@
+---
+interface Props {
+	src: string;
+	title?: string;
+	description?: string;
+	width?: string;
+	height?: string;
+}
+
+const { 
+	src,
+	title = "",
+	description = "",
+	width = "100%",
+	height = "500px"
+} = Astro.props;
+
+const viewerId = `marmoset-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="marmoset-container">
+	{title && <h3 class="viewer-title">{title}</h3>}
+	{description && <p class="viewer-description">{description}</p>}
+	<div 
+		class="marmoset-viewer" 
+		id={viewerId}
+		data-src={src}
+		style={`width: ${width}; height: ${height};`}
+	>
+		<div class="loading-state">
+			<div class="spinner"></div>
+			<span class="loading-text">Cargando modelo 3D...</span>
+			<span class="error-text" style="display: none;">Error: Archivo no encontrado o invalido</span>
+		</div>
+	</div>
+	<p class="viewer-hint">Arrastra para rotar - Scroll para zoom</p>
+</div>
+
+<style>
+	.marmoset-container {
+		width: 100%;
+		margin-bottom: var(--spacing-xl);
+	}
+
+	.viewer-title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--color-text);
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.viewer-description {
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+		margin-bottom: var(--spacing-md);
+	}
+
+	.marmoset-viewer {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		position: relative;
+	}
+
+	.marmoset-viewer :global(canvas) {
+		display: block;
+		width: 100% !important;
+		height: 100% !important;
+	}
+
+	.loading-state {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: var(--spacing-md);
+		color: var(--color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.marmoset-viewer.loaded .loading-state {
+		display: none;
+	}
+
+	.marmoset-viewer.error .loading-state .spinner {
+		display: none;
+	}
+
+	.marmoset-viewer.error .loading-state .loading-text {
+		display: none;
+	}
+
+	.marmoset-viewer.error .loading-state .error-text {
+		display: block !important;
+		color: #ef4444;
+	}
+
+	.viewer-hint {
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+		text-align: center;
+		margin-top: var(--spacing-sm);
+	}
+
+	.spinner {
+		width: 32px;
+		height: 32px;
+		border: 3px solid var(--color-border);
+		border-top-color: #2563eb;
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+</style>
+
+<script>
+	// Cargar Marmoset Viewer script dinamicamente
+	function loadMarmosetScript(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			if ((window as any).marmoset) {
+				resolve();
+				return;
+			}
+
+			const script = document.createElement('script');
+			script.src = 'https://viewer.marmoset.co/main/marmoset.js';
+			script.onload = () => {
+				setTimeout(() => resolve(), 200);
+			};
+			script.onerror = () => reject(new Error('Error cargando Marmoset Viewer'));
+			document.head.appendChild(script);
+		});
+	}
+
+	async function initViewers() {
+		try {
+			await loadMarmosetScript();
+
+			const viewers = document.querySelectorAll('.marmoset-viewer');
+			const marmoset = (window as any).marmoset;
+			
+			if (!marmoset) {
+				console.error('Marmoset no disponible');
+				return;
+			}
+			
+			viewers.forEach((container) => {
+				const src = container.getAttribute('data-src');
+				if (!src) return;
+
+				const htmlContainer = container as HTMLElement;
+				const width = htmlContainer.clientWidth || 800;
+				const height = htmlContainer.clientHeight || 500;
+				
+				// Construir URL absoluta
+				const absoluteSrc = new URL(src, window.location.origin).href;
+				console.log('Cargando modelo desde:', absoluteSrc);
+				
+				try {
+					const loadingState = container.querySelector('.loading-state');
+					
+					// Crear el visor con la URL absoluta
+					const viewer = new marmoset.WebViewer(width, height, absoluteSrc);
+					
+					// Asignar callback de carga
+					viewer.onLoad = function() {
+						if (loadingState) {
+							loadingState.remove();
+						}
+						container.classList.add('loaded');
+						console.log('Modelo cargado exitosamente');
+					};
+					
+					// Insertar el visor
+					container.appendChild(viewer.domRoot);
+					
+					// Cargar la escena (sin parametros)
+					viewer.loadScene();
+					
+				} catch (viewerError) {
+					console.error('Error creando visor:', viewerError);
+					container.classList.add('error');
+				}
+			});
+		} catch (error) {
+			console.error('Error inicializando Marmoset Viewer:', error);
+		}
+	}
+
+	// Inicializar cuando el DOM este listo
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initViewers);
+	} else {
+		setTimeout(initViewers, 100);
+	}
+</script>

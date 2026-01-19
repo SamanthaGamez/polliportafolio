@@ -1,0 +1,8 @@
+<!-- This is actually an SVG serving as placeholder -->
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect fill="#1a1a1a" width="400" height="300"/>
+  <rect fill="#2a2a2a" x="20" y="20" width="360" height="260" rx="8"/>
+  <text x="200" y="150" font-family="system-ui, sans-serif" font-size="16" fill="#666" text-anchor="middle">Imagen placeholder</text>
+  <path d="M180 120 L220 120 L200 100 Z" fill="#444"/>
+  <circle cx="200" cy="140" r="15" fill="#444"/>
+</svg>

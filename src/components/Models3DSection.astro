@@ -1,0 +1,83 @@
+---
+import MarmosetViewer from './MarmosetViewer.astro';
+
+interface Scene {
+	src: string;
+	title: string;
+	description?: string;
+}
+
+interface Props {
+	scenes?: Scene[];
+}
+
+const { 
+	scenes = [
+		{
+			src: '/models/scene.mview',
+			title: 'Librero',
+			description: 'Modelo 3D de un librero con materiales PBR'
+		}
+	]
+} = Astro.props;
+---
+
+<section class="models-section section" id="modelos3d">
+	<div class="container">
+		<h2 class="section-title">Modelos 3D</h2>
+		<p class="section-description">
+			Explora mis modelos 3D de forma interactiva. Arrastra para rotar, scroll para hacer zoom.
+		</p>
+		
+		<div class="scenes-grid">
+			{scenes.map((scene) => (
+				<div class="scene-card">
+					<MarmosetViewer 
+						src={scene.src}
+						title={scene.title}
+						description={scene.description}
+						height="450px"
+					/>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<style>
+	.models-section {
+		min-height: auto;
+		padding: var(--spacing-3xl) 0;
+	}
+
+	.section-description {
+		color: var(--color-text-muted);
+		font-size: 1rem;
+		margin-bottom: var(--spacing-2xl);
+		max-width: 600px;
+	}
+
+	.scenes-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--spacing-2xl);
+	}
+
+	.scene-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-xl);
+		padding: var(--spacing-lg);
+		transition: border-color var(--transition-normal);
+	}
+
+	.scene-card:hover {
+		border-color: #2563eb;
+	}
+
+	@media (min-width: 1024px) {
+		.scenes-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+</style>

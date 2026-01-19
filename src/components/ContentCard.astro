@@ -1,0 +1,250 @@
+---
+interface Category {
+	id: string;
+	title: string;
+	number: string;
+	icon?: string;
+}
+
+interface Props {
+	title?: string;
+	categories?: Category[];
+}
+
+const { 
+	title = "Contents",
+	categories = [
+		{ id: 'videojuegos', title: 'Videojuegos', number: '01' },
+		{ id: 'modelos3d', title: 'Modelos 3D', number: '02' },
+		{ id: 'ilustraciones', title: 'Ilustraciones', number: '03' },
+		{ id: 'cv', title: 'CV', number: '04' },
+	]
+} = Astro.props;
+---
+
+<section class="content-cards" id="categories">
+	<div class="container">
+		<div class="window-container">
+			<div class="window-header">
+				<span class="window-title">{title}</span>
+				<div class="window-controls">
+					<span class="control minimize"></span>
+					<span class="control maximize"></span>
+					<span class="control close"></span>
+				</div>
+			</div>
+			<div class="window-content">
+				<div class="folders-grid">
+					{categories.map((category) => (
+						<a href={`#${category.id}`} class="folder-item">
+							<div class="folder-icon">
+								<svg viewBox="0 0 80 70" class="folder-svg">
+									<path class="folder-back" d="M0 10C0 4.5 4.5 0 10 0H25L35 10H70C75.5 10 80 14.5 80 20V60C80 65.5 75.5 70 70 70H10C4.5 70 0 65.5 0 60V10Z"/>
+									<path class="folder-front" d="M0 25C0 19.5 4.5 15 10 15H70C75.5 15 80 19.5 80 25V60C80 65.5 75.5 70 70 70H10C4.5 70 0 65.5 0 60V25Z"/>
+								</svg>
+								<span class="folder-number">{category.number}</span>
+							</div>
+							<span class="folder-title">{category.title}</span>
+						</a>
+					))}
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.content-cards {
+		padding: var(--spacing-2xl) 0;
+	}
+
+	.window-container {
+		background: #f5f0e8;
+		border: 2px solid #2563eb;
+		border-radius: 12px;
+		overflow: hidden;
+		max-width: 850px;
+		width: 100%;
+		margin: 0 auto;
+		box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+	}
+
+	.window-header {
+		background: #2563eb;
+		padding: 12px 20px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.window-title {
+		color: white;
+		font-size: 1.1rem;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+	}
+
+	.window-controls {
+		display: flex;
+		gap: 12px;
+		align-items: center;
+	}
+
+	.control {
+		width: 14px;
+		height: 14px;
+		border: 2px solid rgba(255, 255, 255, 0.8);
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.control.minimize {
+		border-radius: 0;
+		height: 2px;
+		width: 14px;
+		background: rgba(255, 255, 255, 0.8);
+		border: none;
+		margin-top: 6px;
+	}
+
+	.control.maximize {
+		border-radius: 2px;
+	}
+
+	.control.close {
+		border-radius: 0;
+		position: relative;
+		border: none;
+	}
+
+	.control.close::before,
+	.control.close::after {
+		content: '';
+		position: absolute;
+		width: 16px;
+		height: 2px;
+		background: rgba(255, 255, 255, 0.8);
+		top: 50%;
+		left: 50%;
+	}
+
+	.control.close::before {
+		transform: translate(-50%, -50%) rotate(45deg);
+	}
+
+	.control.close::after {
+		transform: translate(-50%, -50%) rotate(-45deg);
+	}
+
+	.control:hover {
+		opacity: 1;
+	}
+
+	.window-content {
+		padding: 40px 48px;
+	}
+
+	.folders-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 32px;
+		justify-items: center;
+	}
+
+	.folder-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		cursor: pointer;
+		transition: transform 0.2s ease;
+	}
+
+	.folder-item:hover {
+		transform: translateY(-4px);
+	}
+
+	.folder-icon {
+		position: relative;
+		width: 90px;
+		height: 78px;
+	}
+
+	.folder-svg {
+		width: 100%;
+		height: 100%;
+		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+	}
+
+	.folder-back {
+		fill: #3b82f6;
+	}
+
+	.folder-front {
+		fill: #60a5fa;
+	}
+
+	.folder-item:hover .folder-back {
+		fill: #2563eb;
+	}
+
+	.folder-item:hover .folder-front {
+		fill: #3b82f6;
+	}
+
+	.folder-number {
+		position: absolute;
+		top: 55%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-size: 1.6rem;
+		font-weight: 700;
+		color: white;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+	}
+
+	.folder-title {
+		color: #2563eb;
+		font-size: 0.95rem;
+		font-weight: 600;
+		text-align: center;
+		line-height: 1.2;
+	}
+
+	@media (max-width: 600px) {
+		.window-container {
+			max-width: 100%;
+			border-radius: 8px;
+		}
+
+		.folders-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: 16px;
+		}
+
+		.folder-icon {
+			width: 64px;
+			height: 55px;
+		}
+
+		.folder-number {
+			font-size: 1.2rem;
+		}
+
+		.folder-title {
+			font-size: 0.8rem;
+		}
+
+		.window-header {
+			padding: 10px 16px;
+		}
+
+		.window-title {
+			font-size: 1rem;
+		}
+
+		.window-content {
+			padding: 20px 16px;
+		}
+	}
+</style>

@@ -1,0 +1,213 @@
+---
+interface Project {
+	id: string;
+	title: string;
+	description: string;
+	image?: string;
+	tags?: string[];
+	link?: string;
+}
+
+interface Props {
+	id: string;
+	title: string;
+	color?: string;
+	projects?: Project[];
+}
+
+const { 
+	id,
+	title,
+	color = "#6366f1",
+	projects = []
+} = Astro.props;
+---
+
+<section class="project-section section" id={id} style={`--section-color: ${color}`}>
+	<div class="container">
+		<div class="section-header">
+			<h2 class="section-title">{title}</h2>
+		</div>
+		
+		{projects.length > 0 ? (
+			<div class="projects-grid">
+				{projects.map((project) => (
+					<article class="project-card">
+						<div class="project-image">
+							{project.image ? (
+								<img src={project.image} alt={project.title} loading="lazy" />
+							) : (
+								<div class="project-placeholder">
+									<span>🖼️</span>
+								</div>
+							)}
+							<div class="project-overlay">
+								{project.link && (
+									<a href={project.link} class="project-link" target="_blank" rel="noopener noreferrer">
+										Ver proyecto
+										<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+										</svg>
+									</a>
+								)}
+							</div>
+						</div>
+						<div class="project-info">
+							<h3 class="project-title">{project.title}</h3>
+							<p class="project-description">{project.description}</p>
+							{project.tags && project.tags.length > 0 && (
+								<div class="project-tags">
+									{project.tags.map((tag) => (
+										<span class="tag">{tag}</span>
+									))}
+								</div>
+							)}
+						</div>
+					</article>
+				))}
+			</div>
+		) : (
+			<div class="empty-state">
+				<p>Próximamente más proyectos...</p>
+			</div>
+		)}
+	</div>
+</section>
+
+<style>
+	.project-section {
+		min-height: auto;
+		padding: var(--spacing-3xl) 0;
+	}
+
+	.section-header {
+		margin-bottom: var(--spacing-2xl);
+	}
+
+	.projects-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: var(--spacing-xl);
+	}
+
+	.project-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		transition: 
+			transform var(--transition-normal),
+			border-color var(--transition-normal),
+			box-shadow var(--transition-normal);
+	}
+
+	.project-card:hover {
+		transform: translateY(-5px);
+		border-color: var(--section-color);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	}
+
+	.project-image {
+		position: relative;
+		aspect-ratio: 16 / 10;
+		overflow: hidden;
+	}
+
+	.project-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform var(--transition-slow);
+	}
+
+	.project-card:hover .project-image img {
+		transform: scale(1.05);
+	}
+
+	.project-placeholder {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--color-surface-light);
+		font-size: 3rem;
+	}
+
+	.project-overlay {
+		position: absolute;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.7);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: opacity var(--transition-normal);
+	}
+
+	.project-card:hover .project-overlay {
+		opacity: 1;
+	}
+
+	.project-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		padding: var(--spacing-sm) var(--spacing-lg);
+		background: var(--section-color);
+		border-radius: var(--radius-full);
+		font-size: 0.875rem;
+		font-weight: 600;
+		transition: transform var(--transition-fast);
+	}
+
+	.project-link:hover {
+		transform: scale(1.05);
+	}
+
+	.project-info {
+		padding: var(--spacing-lg);
+	}
+
+	.project-title {
+		font-size: 1.125rem;
+		font-weight: 600;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.project-description {
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+		margin-bottom: var(--spacing-md);
+		line-height: 1.6;
+	}
+
+	.project-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacing-xs);
+	}
+
+	.tag {
+		padding: var(--spacing-xs) var(--spacing-sm);
+		background: var(--color-surface-light);
+		border-radius: var(--radius-sm);
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: var(--spacing-3xl);
+		color: var(--color-text-muted);
+		background: var(--color-surface);
+		border: 1px dashed var(--color-border);
+		border-radius: var(--radius-lg);
+	}
+
+	@media (max-width: 768px) {
+		.projects-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
