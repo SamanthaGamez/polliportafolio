@@ -83,108 +83,84 @@ const {
         left: 0;
         right: 0;
         z-index: 1000;
-        padding: 1rem 2rem;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0; /* Sin padding global, usaremos altura fija */
+        height: 80px; /* Altura fija para la barra superior */
+        background: #00996a; /* Fondo verde sólido */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s ease;
     }
 
     .navbar.scrolled {
-        padding: 0.6rem 2rem;
+        background: #007750; /* Un poco más oscuro al scrollear */
     }
 
     .navbar-container {
         max-width: 1400px;
+        width: 100%;
+        height: 100%;
         margin: 0 auto;
+        padding: 0 5%; /* Espacio lateral */
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between; /* Distribuye los links a lo ancho */
     }
 
-    /* ===== PILL NAVIGATION ===== */
+    /* ===== NAVIGATION LINKS ===== */
     .nav-pills {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
+        justify-content: space-between; /* Links separados */
+        width: 100%; /* Ocupar todo el ancho disponible */
         list-style: none;
         margin: 0;
-        padding: 0.35rem;
-        background: linear-gradient(135deg, #00996a 0%, #007750 100%);
-        border-radius: 50px;
-        box-shadow:
-            0 4px 20px rgba(0, 119, 80, 0.25),
-            0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        padding: 0;
+        background: transparent; /* Quitamos el fondo de píldora */
+        box-shadow: none; /* Quitamos sombras */
+        border-radius: 0;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
-    .navbar.scrolled .nav-pills {
-        background: linear-gradient(
-            135deg,
-            rgba(0, 153, 106, 0.92) 0%,
-            rgba(0, 119, 80, 0.92) 100%
-        );
-        box-shadow:
-            0 8px 32px rgba(0, 0, 0, 0.15),
-            0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-    }
-
-    /* ===== NAV PILL ITEMS ===== */
+    /* ===== NAV ITEM ===== */
     .nav-pill {
         position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.65rem 1.25rem;
-        color: rgba(255, 255, 255, 0.85);
-        font-family: "Fredoka", cursive;
-        font-size: 0.9rem;
-        font-weight: 500;
+        display: inline-block;
+        padding: 0.5rem 0;
+        color: rgba(255, 255, 255, 0.7); /* Texto blanco semitransparente */
+        font-family: "Fredoka", sans-serif; /* Tipografía bold/rounded */
+        font-size: 1.6rem;
+        font-weight: 400; /* Regular por defecto */
+        text-transform: uppercase; /* MAYÚSCULAS */
         text-decoration: none;
-        border-radius: 40px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow: hidden;
+        background: transparent !important; /* Sin fondo en hover */
+        border-radius: 0;
         outline: none;
+        transition: all 0.2s ease; /* Transición suave para el cambio de grosor */
     }
 
     .nav-pill:hover {
-        color: #ffffff;
-        background: rgba(255, 255, 255, 0.12);
-    }
-
-    .nav-pill:focus-visible {
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+        color: #ffffff; /* Blanco puro en hover */
+        transform: translateY(-2px);
     }
 
     .nav-pill.active {
-        color: #007750;
-        background: #ffffff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        color: #ffffff;
+        background: transparent;
+        box-shadow: none;
+        font-weight: 600; /* Se vuelve más grueso (Bold) cuando está activo/seleccionado */
+        transform: scale(
+            1.05
+        ); /* Ligerísimo aumento para compensar visualmente */
     }
 
     .pill-text {
         position: relative;
         z-index: 1;
-        transition: transform 0.2s ease;
     }
 
-    .nav-pill:hover .pill-text {
-        transform: translateY(-1px);
-    }
-
-    /* Subtle underline indicator */
+    /* Quitamos el indicador de píldora antiguo */
     .pill-indicator {
-        position: absolute;
-        bottom: 8px;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 2px;
-        transform: translateX(-50%);
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .nav-pill:hover:not(.active) .pill-indicator {
-        width: 60%;
+        display: none;
     }
 
     /* ===== MOBILE MENU BUTTON ===== */
@@ -317,10 +293,11 @@ const {
     }
 
     /* Larger screens - more spacing */
+    /* Larger screens - more spacing */
     @media (min-width: 1200px) {
         .nav-pill {
             padding: 0.7rem 1.5rem;
-            font-size: 0.95rem;
+            /* font-size eliminado para respetar el base */
         }
     }
 
