@@ -11,14 +11,14 @@ interface Props {
 	categories?: Category[];
 }
 
-const { 
+const {
 	title = "Contents",
 	categories = [
-		{ id: 'videojuegos', title: 'Videojuegos', number: '01' },
-		{ id: 'modelos3d', title: 'Modelos 3D', number: '02' },
-		{ id: 'ilustraciones', title: 'Ilustraciones', number: '03' },
-		{ id: 'cv', title: 'CV', number: '04' },
-	]
+		{ id: "videojuegos", title: "Videojuegos", number: "01" },
+		{ id: "modelos3d", title: "Modelos 3D", number: "02" },
+		{ id: "ilustraciones", title: "Ilustraciones", number: "03" },
+		{ id: "cv", title: "CV", number: "04" },
+	],
 } = Astro.props;
 ---
 
@@ -35,18 +35,30 @@ const {
 			</div>
 			<div class="window-content">
 				<div class="folders-grid">
-					{categories.map((category) => (
-						<a href={`#${category.id}`} class="folder-item">
-							<div class="folder-icon">
-								<svg viewBox="0 0 80 70" class="folder-svg">
-									<path class="folder-back" d="M0 10C0 4.5 4.5 0 10 0H25L35 10H70C75.5 10 80 14.5 80 20V60C80 65.5 75.5 70 70 70H10C4.5 70 0 65.5 0 60V10Z"/>
-									<path class="folder-front" d="M0 25C0 19.5 4.5 15 10 15H70C75.5 15 80 19.5 80 25V60C80 65.5 75.5 70 70 70H10C4.5 70 0 65.5 0 60V25Z"/>
-								</svg>
-								<span class="folder-number">{category.number}</span>
-							</div>
-							<span class="folder-title">{category.title}</span>
-						</a>
-					))}
+					{
+						categories.map((category) => (
+							<a href={`#${category.id}`} class="folder-item">
+								<div class="folder-icon">
+									<svg viewBox="0 0 80 70" class="folder-svg">
+										<path
+											class="folder-back"
+											d="M0 10C0 4.5 4.5 0 10 0H25L35 10H70C75.5 10 80 14.5 80 20V60C80 65.5 75.5 70 70 70H10C4.5 70 0 65.5 0 60V10Z"
+										/>
+										<path
+											class="folder-front"
+											d="M0 25C0 19.5 4.5 15 10 15H70C75.5 15 80 19.5 80 25V60C80 65.5 75.5 70 70 70H10C4.5 70 0 65.5 0 60V25Z"
+										/>
+									</svg>
+									<span class="folder-number">
+										{category.number}
+									</span>
+								</div>
+								<span class="folder-title">
+									{category.title}
+								</span>
+							</a>
+						))
+					}
 				</div>
 			</div>
 		</div>
@@ -59,18 +71,22 @@ const {
 	}
 
 	.window-container {
-		background: #f5f0e8;
-		border: 2px solid #2563eb;
+		background: var(--color-surface-light);
+		border: 2px solid var(--color-primary);
 		border-radius: 12px;
 		overflow: hidden;
 		max-width: 850px;
 		width: 100%;
 		margin: 0 auto;
-		box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+		box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 	}
 
 	.window-header {
-		background: #2563eb;
+		background: linear-gradient(
+			135deg,
+			var(--color-primary) 0%,
+			var(--color-primary-dark) 100%
+		);
 		padding: 12px 20px;
 		display: flex;
 		align-items: center;
@@ -119,7 +135,7 @@ const {
 
 	.control.close::before,
 	.control.close::after {
-		content: '';
+		content: "";
 		position: absolute;
 		width: 16px;
 		height: 2px;
@@ -177,19 +193,19 @@ const {
 	}
 
 	.folder-back {
-		fill: #3b82f6;
+		fill: #00b37d;
 	}
 
 	.folder-front {
-		fill: #60a5fa;
+		fill: #33c896;
 	}
 
 	.folder-item:hover .folder-back {
-		fill: #2563eb;
+		fill: #00996a;
 	}
 
 	.folder-item:hover .folder-front {
-		fill: #3b82f6;
+		fill: #00b37d;
 	}
 
 	.folder-number {
@@ -204,7 +220,7 @@ const {
 	}
 
 	.folder-title {
-		color: #2563eb;
+		color: var(--color-primary);
 		font-size: 0.95rem;
 		font-weight: 600;
 		text-align: center;

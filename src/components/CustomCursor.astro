@@ -1,0 +1,201 @@
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+
+<script>
+    const cursorDot = document.querySelector(".cursor-dot") as HTMLElement;
+    const cursorOutline = document.querySelector(
+        ".cursor-outline",
+    ) as HTMLElement;
+
+    const state = {
+        mouseX: 0,
+        mouseY: 0,
+        outlineX: 0,
+        outlineY: 0,
+        magneticTarget: null as HTMLElement | null,
+    };
+
+    // 1. Detección de movimiento
+    document.addEventListener("mousemove", (e: MouseEvent) => {
+        state.mouseX = e.clientX;
+        state.mouseY = e.clientY;
+
+        if (cursorDot) {
+            cursorDot.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+        }
+
+        // --- DETECCIÓN DE HOVER ---
+        const target = e.target as HTMLElement;
+
+        // Elementos Interactivos (Magnetismo)
+        const interactive = target.closest(
+            "a, button, .hover-target, .hover-grow, .control, .folder-item, .project-card, .social-link, .back-to-top, .mobile-menu-btn, .nav-pill, .title-svg",
+        ) as HTMLElement;
+
+        // Limpieza de estados previos si cambiamos de objetivo
+        if (state.magneticTarget && state.magneticTarget !== interactive) {
+            state.magneticTarget.classList.remove("magnet-active");
+            state.magneticTarget = null;
+        }
+
+        if (interactive) {
+            // Interactivos (Magnetismo)
+            if (state.magneticTarget !== interactive) {
+                state.magneticTarget = interactive;
+                interactive.classList.add("magnet-active");
+            }
+            document.body.classList.add("hovering");
+        } else {
+            // Nada: Cursor normal
+            document.body.classList.remove("hovering");
+            state.magneticTarget = null;
+        }
+
+        if (document.body.classList.contains("cursor-hidden")) {
+            document.body.classList.remove("cursor-hidden");
+        }
+    });
+
+    // 2. Loop de Física
+    const animate = () => {
+        let targetX = state.mouseX;
+        let targetY = state.mouseY;
+
+        // LÓGICA DE MAGNETISMO
+        if (state.magneticTarget) {
+            const rect = state.magneticTarget.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const attraction = 0.35;
+            targetX = centerX + (state.mouseX - centerX) * attraction;
+            targetY = centerY + (state.mouseY - centerY) * attraction;
+        }
+
+        const speed = 0.15;
+        state.outlineX += (targetX - state.outlineX) * speed;
+        state.outlineY += (targetY - state.outlineY) * speed;
+
+        if (cursorOutline) {
+            cursorOutline.style.transform = `translate(${state.outlineX}px, ${state.outlineY}px) translate(-50%, -50%)`;
+        }
+
+        requestAnimationFrame(animate);
+    };
+    animate();
+
+    // 3. Listeners Globales
+    document.addEventListener("mousedown", () =>
+        document.body.classList.add("clicking"),
+    );
+    document.addEventListener("mouseup", () =>
+        document.body.classList.remove("clicking"),
+    );
+
+    document.addEventListener("mouseleave", () => {
+        document.body.classList.add("cursor-hidden");
+        document.body.classList.remove("hovering");
+    });
+
+    document.addEventListener("mouseenter", () =>
+        document.body.classList.remove("cursor-hidden"),
+    );
+</script>
+
+<style is:global>
+    /* Ocultar cursor nativo SOLO en desktop si JS cargó */
+    @media (pointer: fine) {
+        /* Ocultar cursor en todo el sitio por defecto */
+        body,
+        a,
+        button,
+        [role="button"],
+        .hover-grow,
+        .control,
+        .folder-item,
+        .project-card,
+        .social-link,
+        .back-to-top,
+        .mobile-menu-btn,
+        .nav-pill {
+            cursor: none !important;
+        }
+
+        /* Mostrar cursor de texto nativo sobre inputs para usabilidad */
+        input,
+        textarea,
+        [contenteditable="true"] {
+            cursor: text !important;
+        }
+    }
+
+    /* Base */
+    .cursor-dot,
+    .cursor-outline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        will-change: transform, width, height, background-color, border-radius;
+    }
+
+    /* 1. EL PUNTO */
+    .cursor-dot {
+        width: 8px;
+        height: 8px;
+        background: white;
+        mix-blend-mode: exclusion;
+        transition: opacity 0.2s;
+    }
+
+    /* 2. EL CÍRCULO */
+    .cursor-outline {
+        width: 40px;
+        height: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* --- ESTADOS --- */
+
+    /* HOVER INTERACTIVO (MAGNETIC) */
+    body.hovering .cursor-outline {
+        width: 60px;
+        height: 60px;
+        background: white;
+        mix-blend-mode: exclusion;
+        border-color: transparent;
+    }
+
+    body.hovering .cursor-dot {
+        opacity: 0;
+    }
+
+    /* CLICK STATE */
+    body.clicking .cursor-outline {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    /* ESTADO OCULTO */
+    .cursor-hidden .cursor-dot,
+    .cursor-hidden .cursor-outline {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    /* Mobile: Desactivar todo */
+    @media (max-width: 1024px) {
+        .cursor-dot,
+        .cursor-outline {
+            display: none;
+        }
+        body,
+        a,
+        button {
+            cursor: auto !important;
+        }
+    }
+</style>

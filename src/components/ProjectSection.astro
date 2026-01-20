@@ -15,62 +15,81 @@ interface Props {
 	projects?: Project[];
 }
 
-const { 
-	id,
-	title,
-	color = "#6366f1",
-	projects = []
-} = Astro.props;
+const { id, title, color = "#6366f1", projects = [] } = Astro.props;
 ---
 
-<section class="project-section section" id={id} style={`--section-color: ${color}`}>
+<section
+	class="project-section section"
+	id={id}
+	style={`--section-color: ${color}`}
+>
 	<div class="container">
 		<div class="section-header">
 			<h2 class="section-title">{title}</h2>
 		</div>
-		
-		{projects.length > 0 ? (
-			<div class="projects-grid">
-				{projects.map((project) => (
-					<article class="project-card">
-						<div class="project-image">
-							{project.image ? (
-								<img src={project.image} alt={project.title} loading="lazy" />
-							) : (
-								<div class="project-placeholder">
-									<span>🖼️</span>
+
+		{
+			projects.length > 0 ? (
+				<div class="projects-grid">
+					{projects.map((project) => (
+						<article class="project-card">
+							<div class="project-image">
+								{project.image ? (
+									<img
+										src={project.image}
+										alt={project.title}
+										loading="lazy"
+									/>
+								) : (
+									<div class="project-placeholder">
+										<span>🖼️</span>
+									</div>
+								)}
+								<div class="project-overlay">
+									{project.link && (
+										<a
+											href={project.link}
+											class="project-link"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											Ver proyecto
+											<svg
+												width="16"
+												height="16"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+											>
+												<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
+											</svg>
+										</a>
+									)}
 								</div>
-							)}
-							<div class="project-overlay">
-								{project.link && (
-									<a href={project.link} class="project-link" target="_blank" rel="noopener noreferrer">
-										Ver proyecto
-										<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-											<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
-										</svg>
-									</a>
+							</div>
+							<div class="project-info">
+								<h3 class="project-title">{project.title}</h3>
+								<p class="project-description">
+									{project.description}
+								</p>
+								{project.tags && project.tags.length > 0 && (
+									<div class="project-tags">
+										{project.tags.map((tag) => (
+											<span class="tag">{tag}</span>
+										))}
+									</div>
 								)}
 							</div>
-						</div>
-						<div class="project-info">
-							<h3 class="project-title">{project.title}</h3>
-							<p class="project-description">{project.description}</p>
-							{project.tags && project.tags.length > 0 && (
-								<div class="project-tags">
-									{project.tags.map((tag) => (
-										<span class="tag">{tag}</span>
-									))}
-								</div>
-							)}
-						</div>
-					</article>
-				))}
-			</div>
-		) : (
-			<div class="empty-state">
-				<p>Próximamente más proyectos...</p>
-			</div>
-		)}
+						</article>
+					))}
+				</div>
+			) : (
+				<div class="empty-state">
+					<p>Próximamente más proyectos...</p>
+				</div>
+			)
+		}
 	</div>
 </section>
 
@@ -95,7 +114,7 @@ const {
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-lg);
 		overflow: hidden;
-		transition: 
+		transition:
 			transform var(--transition-normal),
 			border-color var(--transition-normal),
 			box-shadow var(--transition-normal);
@@ -104,7 +123,7 @@ const {
 	.project-card:hover {
 		transform: translateY(-5px);
 		border-color: var(--section-color);
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 	}
 
 	.project-image {

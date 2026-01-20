@@ -1,0 +1,548 @@
+---
+interface Props {
+    links?: Array<{
+        id: string;
+        label: string;
+        href: string;
+    }>;
+}
+
+const {
+    links = [
+        { id: "inicio", label: "Inicio", href: "#landing" },
+        { id: "sobremi", label: "Sobre Mí", href: "#introduction" },
+        { id: "portafolio", label: "Portafolio", href: "#videojuegos" },
+        { id: "contacto", label: "Contacto", href: "#footer" },
+    ],
+} = Astro.props;
+---
+
+<nav
+    class="navbar"
+    id="navbar"
+    role="navigation"
+    aria-label="Navegación principal"
+>
+    <div class="navbar-container">
+        <!-- Pill-shaped navigation -->
+        <ul class="nav-pills" role="menubar">
+            {
+                links.map((link, index) => (
+                    <li role="none">
+                        <a
+                            href={link.href}
+                            class="nav-pill"
+                            data-section={link.id}
+                            role="menuitem"
+                            aria-current={index === 0 ? "page" : undefined}
+                        >
+                            <span class="pill-text">{link.label}</span>
+                            <span class="pill-indicator" aria-hidden="true" />
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+
+        <!-- Mobile Menu Button -->
+        <button
+            class="mobile-menu-btn"
+            id="mobile-menu-btn"
+            aria-label="Abrir menú de navegación"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+        >
+            <span class="hamburger" aria-hidden="true">
+                <span class="line"></span>
+                <span class="line"></span>
+            </span>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+        <ul class="mobile-links" role="menu">
+            {
+                links.map((link) => (
+                    <li role="none">
+                        <a href={link.href} class="mobile-link" role="menuitem">
+                            {link.label}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+</nav>
+
+<style>
+    /* ===== BASE NAVBAR ===== */
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 1rem 2rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .navbar.scrolled {
+        padding: 0.6rem 2rem;
+    }
+
+    .navbar-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ===== PILL NAVIGATION ===== */
+    .nav-pills {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        list-style: none;
+        margin: 0;
+        padding: 0.35rem;
+        background: linear-gradient(135deg, #00996a 0%, #007750 100%);
+        border-radius: 50px;
+        box-shadow:
+            0 4px 20px rgba(0, 119, 80, 0.25),
+            0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .navbar.scrolled .nav-pills {
+        background: linear-gradient(
+            135deg,
+            rgba(0, 153, 106, 0.92) 0%,
+            rgba(0, 119, 80, 0.92) 100%
+        );
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    }
+
+    /* ===== NAV PILL ITEMS ===== */
+    .nav-pill {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.65rem 1.25rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-family: "Fredoka", cursive;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 40px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        outline: none;
+    }
+
+    .nav-pill:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .nav-pill:focus-visible {
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+
+    .nav-pill.active {
+        color: #007750;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .pill-text {
+        position: relative;
+        z-index: 1;
+        transition: transform 0.2s ease;
+    }
+
+    .nav-pill:hover .pill-text {
+        transform: translateY(-1px);
+    }
+
+    /* Subtle underline indicator */
+    .pill-indicator {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 2px;
+        transform: translateX(-50%);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-pill:hover:not(.active) .pill-indicator {
+        width: 60%;
+    }
+
+    /* ===== MOBILE MENU BUTTON ===== */
+    .mobile-menu-btn {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        background: linear-gradient(135deg, #00996a 0%, #007750 100%);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 119, 80, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .mobile-menu-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 119, 80, 0.4);
+    }
+
+    .mobile-menu-btn:focus-visible {
+        outline: 2px solid #007750;
+        outline-offset: 3px;
+    }
+
+    .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 20px;
+    }
+
+    .hamburger .line {
+        width: 100%;
+        height: 2px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+    }
+
+    .mobile-menu-btn[aria-expanded="true"] .hamburger .line:first-child {
+        transform: rotate(45deg) translate(3px, 3px);
+    }
+
+    .mobile-menu-btn[aria-expanded="true"] .hamburger .line:last-child {
+        transform: rotate(-45deg) translate(3px, -3px);
+    }
+
+    /* ===== MOBILE MENU ===== */
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 50%;
+        transform: translateX(-50%) translateY(-10px);
+        width: calc(100% - 2rem);
+        max-width: 320px;
+        background: linear-gradient(135deg, #00996a 0%, #007750 100%);
+        border-radius: 20px;
+        padding: 0.75rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .mobile-menu.active {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .mobile-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .mobile-link {
+        display: block;
+        padding: 0.85rem 1.25rem;
+        color: white;
+        font-family: "Fredoka", cursive;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        text-align: center;
+        border-radius: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-link:hover,
+    .mobile-link:focus {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .mobile-link:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.5);
+        outline-offset: -2px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 0.75rem 1rem;
+        }
+
+        .navbar-container {
+            justify-content: flex-end;
+        }
+
+        .nav-pills {
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: flex;
+        }
+
+        .mobile-menu {
+            display: block;
+        }
+    }
+
+    /* Larger screens - more spacing */
+    @media (min-width: 1200px) {
+        .nav-pill {
+            padding: 0.7rem 1.5rem;
+            font-size: 0.95rem;
+        }
+    }
+
+    /* Reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+        .nav-pill,
+        .mobile-menu,
+        .mobile-menu-btn,
+        .hamburger .line {
+            transition: none;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const navbar = document.getElementById("navbar");
+        const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const navPills = document.querySelectorAll(".nav-pill");
+        const mobileLinks = document.querySelectorAll(".mobile-link");
+        const allLinks = [...navPills, ...mobileLinks];
+
+        // ===== SCROLL EFFECT =====
+        let lastScrollY = 0;
+        let ticking = false;
+
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+
+            if (scrollY > 80) {
+                navbar?.classList.add("scrolled");
+            } else {
+                navbar?.classList.remove("scrolled");
+            }
+
+            lastScrollY = scrollY;
+            ticking = false;
+        };
+
+        window.addEventListener(
+            "scroll",
+            () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(handleScroll);
+                    ticking = true;
+                }
+            },
+            { passive: true },
+        );
+
+        handleScroll(); // Initial check
+
+        // ===== MOBILE MENU TOGGLE =====
+        const toggleMobileMenu = () => {
+            const isExpanded =
+                mobileMenuBtn?.getAttribute("aria-expanded") === "true";
+            mobileMenuBtn?.setAttribute(
+                "aria-expanded",
+                (!isExpanded).toString(),
+            );
+            mobileMenu?.setAttribute("aria-hidden", isExpanded.toString());
+            mobileMenu?.classList.toggle("active", !isExpanded);
+        };
+
+        mobileMenuBtn?.addEventListener("click", toggleMobileMenu);
+
+        // Close on escape key
+        document.addEventListener("keydown", (e) => {
+            if (
+                e.key === "Escape" &&
+                mobileMenu?.classList.contains("active")
+            ) {
+                toggleMobileMenu();
+                mobileMenuBtn?.focus();
+            }
+        });
+
+        // Close on outside click
+        document.addEventListener("click", (e) => {
+            if (
+                mobileMenu?.classList.contains("active") &&
+                !mobileMenu.contains(e.target as Node) &&
+                !mobileMenuBtn?.contains(e.target as Node)
+            ) {
+                toggleMobileMenu();
+            }
+        });
+
+        // ===== SMOOTH SCROLL & ACTIVE STATE =====
+        allLinks.forEach((link) => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                const href = link.getAttribute("href");
+
+                if (href) {
+                    const target = document.querySelector(href);
+                    if (target) {
+                        // Calculate offset for fixed navbar
+                        const navbarHeight = navbar?.offsetHeight || 0;
+                        const targetPosition =
+                            target.getBoundingClientRect().top +
+                            window.scrollY -
+                            navbarHeight -
+                            20;
+
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: "smooth",
+                        });
+                    }
+                }
+
+                // Close mobile menu after clicking
+                if (mobileMenu?.classList.contains("active")) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+
+        // ===== SECTION DETECTION =====
+        // Sections that belong to each nav item
+        // Portafolio covers: categories, videojuegos, modelos3d, ilustraciones, cv
+        const portfolioSections = [
+            "categories",
+            "videojuegos",
+            "modelos3d",
+            "ilustraciones",
+            "cv",
+        ];
+
+        // All sections to track
+        const allSections = [
+            { id: "landing", navId: "inicio" },
+            { id: "introduction", navId: "sobremi" },
+            { id: "categories", navId: "portafolio" },
+            { id: "videojuegos", navId: "portafolio" },
+            { id: "modelos3d", navId: "portafolio" },
+            { id: "ilustraciones", navId: "portafolio" },
+            { id: "cv", navId: "portafolio" },
+            { id: "footer", navId: "contacto" },
+        ];
+
+        let activeSection = "inicio";
+
+        const updateActiveState = (navId: string) => {
+            if (activeSection === navId) return; // No change needed
+            activeSection = navId;
+
+            // Update desktop nav pills
+            navPills.forEach((pill) => {
+                const pillSection = pill.getAttribute("data-section");
+                pill.classList.remove("active");
+                pill.removeAttribute("aria-current");
+
+                if (pillSection === navId) {
+                    pill.classList.add("active");
+                    pill.setAttribute("aria-current", "page");
+                }
+            });
+
+            // Update mobile links
+            mobileLinks.forEach((link, index) => {
+                const navIds = ["inicio", "sobremi", "portafolio", "contacto"];
+                link.classList.remove("active");
+                if (navIds[index] === navId) {
+                    link.classList.add("active");
+                }
+            });
+        };
+
+        const detectActiveSection = () => {
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const docHeight = document.documentElement.scrollHeight;
+            const navbarHeight = navbar?.offsetHeight || 60;
+
+            // Priority 1: If at bottom of page (within 100px), activate Contacto
+            if (scrollTop + windowHeight >= docHeight - 100) {
+                updateActiveState("contacto");
+                return;
+            }
+
+            // Priority 2: Find which section is currently in view
+            let currentNavId = "inicio";
+
+            for (const section of allSections) {
+                const element = document.getElementById(section.id);
+                if (!element) continue;
+
+                const rect = element.getBoundingClientRect();
+                const sectionTop = rect.top;
+                const sectionBottom = rect.bottom;
+
+                // Section is considered "active" when its top is at or above the trigger point
+                // and its bottom is still visible
+                if (
+                    sectionTop <= navbarHeight + 100 &&
+                    sectionBottom > navbarHeight
+                ) {
+                    currentNavId = section.navId;
+                }
+            }
+
+            updateActiveState(currentNavId);
+        };
+
+        // Throttled scroll listener for performance
+        let rafId: number | null = null;
+        window.addEventListener(
+            "scroll",
+            () => {
+                if (rafId) return;
+                rafId = requestAnimationFrame(() => {
+                    detectActiveSection();
+                    rafId = null;
+                });
+            },
+            { passive: true },
+        );
+
+        // Set initial active state
+        detectActiveSection();
+    });
+</script>

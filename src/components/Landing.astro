@@ -4,37 +4,170 @@ interface Props {
 	role?: string;
 }
 
-const { 
-	name = "Samantha Gámez",
-	role = "Game Artist, Stylized 3D & 2D"
-} = Astro.props;
+const { name = "Samantha Gámez", role = "Game Artist, Stylized 3D & 2D" } =
+	Astro.props;
 ---
 
 <section class="landing" id="landing">
-	<!-- Decorative shapes - positioned absolutely -->
-	<img src="/vectors/Shape1.svg" alt="" class="shape shape-1" />
-	<img src="/vectors/Shape2.svg" alt="" class="shape shape-2" />
-	<img src="/vectors/Shape3.svg" alt="" class="shape shape-3" />
-	<img src="/vectors/Shape4.svg" alt="" class="shape shape-4" />
-	<img src="/vectors/Shape5.svg" alt="" class="shape shape-5" />
-	<img src="/vectors/Shape6.svg" alt="" class="shape shape-6" />
-	
-	<!-- Stars -->
-	<img src="/vectors/Star1.svg" alt="" class="star star-1" />
-	<img src="/vectors/Star1.svg" alt="" class="star star-2" />
-	<img src="/vectors/Star2.svg" alt="" class="star star-3" />
+	<!-- Decorative shapes - positioned absolutely with animations -->
+	<img
+		src="/vectors/Shape1.svg"
+		alt=""
+		class="shape shape-1 float-element"
+		data-speed="0.02"
+	/>
+	<img
+		src="/vectors/Shape2.svg"
+		alt=""
+		class="shape shape-2 float-element"
+		data-speed="0.015"
+	/>
+	<img
+		src="/vectors/Shape3.svg"
+		alt=""
+		class="shape shape-3 float-element"
+		data-speed="0.025"
+	/>
+	<img
+		src="/vectors/Shape4.svg"
+		alt=""
+		class="shape shape-4 float-element"
+		data-speed="0.018"
+	/>
+	<img
+		src="/vectors/Shape5.svg"
+		alt=""
+		class="shape shape-5 float-element"
+		data-speed="0.022"
+	/>
+	<img
+		src="/vectors/Shape6.svg"
+		alt=""
+		class="shape shape-6 float-element"
+		data-speed="0.02"
+	/>
 
-	<!-- Text content - left side -->
-	<div class="landing-text">
+	<!-- Stars with pulse animation -->
+	<img src="/vectors/Star1.svg" alt="" class="star star-1 pulse-star" />
+	<img src="/vectors/Star1.svg" alt="" class="star star-2 pulse-star" />
+	<img src="/vectors/Star2.svg" alt="" class="star star-3 pulse-star" />
+
+	<!-- Text content - left side with entrance animation -->
+	<div class="landing-text entrance-fade">
 		<h1 class="landing-title">
-			<img src="/vectors/MyPortfolio.svg" alt="My Portfolio" class="title-svg" />
+			<img
+				src="/vectors/MyPortfolio.svg"
+				alt="My Portfolio"
+				class="title-svg hover-grow"
+			/>
 		</h1>
 		<p class="landing-subtitle">{name} | {role}</p>
 	</div>
-	
-	<!-- Character - right side -->
-	<img src="/vectors/SammyHD.svg" alt="Samantha character illustration" class="sammy" />
+
+	<!-- Character - right side with parallax effect -->
+	<div class="sammy-container" id="sammy-parallax">
+		<img
+			src="/vectors/SammyHD.svg"
+			alt="Samantha character illustration"
+			class="sammy"
+		/>
+	</div>
+
+	<!-- Scroll indicator -->
+	<div class="scroll-indicator">
+		<div class="scroll-arrow"></div>
+		<span class="scroll-text">Scroll</span>
+	</div>
 </section>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const sammyContainer = document.getElementById("sammy-parallax");
+		const floatElements = document.querySelectorAll(".float-element");
+		const landing = document.getElementById("landing");
+
+		if (!sammyContainer || !landing) return;
+
+		// --- Smooth Parallax States ---
+		let targetX = 0;
+		let targetY = 0;
+		let currentX = 0;
+		let currentY = 0;
+		const friction = 0.08; // Controla qué tan "suave" es el seguimiento (menor = más suave)
+
+		// Parallax movement logic
+		const handleMouseMove = (e: MouseEvent) => {
+			const rect = landing.getBoundingClientRect();
+			const centerX = rect.width / 2;
+			const centerY = rect.height / 2;
+			const mouseX = e.clientX - rect.left;
+			const mouseY = e.clientY - rect.top;
+
+			// Target normalized between -1 and 1
+			targetX = (mouseX - centerX) / centerX;
+			targetY = (mouseY - centerY) / centerY;
+		};
+
+		const handleMouseLeave = () => {
+			targetX = 0;
+			targetY = 0;
+		};
+
+		// Main animation loop
+		const animate = () => {
+			// Interpolate position
+			currentX += (targetX - currentX) * friction;
+			currentY += (targetY - currentY) * friction;
+
+			// Apply to Sammy
+			const sammyMoveX = currentX * 30;
+			const sammyMoveY = currentY * 20;
+			const sammyRotate = currentX * 4;
+			sammyContainer.style.transform = `translateY(-50%) translate3d(${sammyMoveX}px, ${sammyMoveY}px, 0) rotate(${sammyRotate}deg)`;
+
+			// Apply to floating elements
+			floatElements.forEach((el) => {
+				const speed = parseFloat(
+					el.getAttribute("data-speed") || "0.02",
+				);
+				const moveX = currentX * (speed * 600);
+				const moveY = currentY * (speed * 400);
+				(el as HTMLElement).style.transform =
+					`translate3d(${moveX}px, ${moveY}px, 0)`;
+			});
+
+			requestAnimationFrame(animate);
+		};
+
+		landing.addEventListener("mousemove", handleMouseMove);
+		landing.addEventListener("mouseleave", handleMouseLeave);
+
+		// Start loop
+		animate();
+
+		// Entrance animations observer
+		const entranceElements = document.querySelectorAll(".entrance-fade");
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add("visible");
+					}
+				});
+			},
+			{ threshold: 0.1 },
+		);
+
+		entranceElements.forEach((el) => observer.observe(el));
+
+		// Initial entrance
+		setTimeout(() => {
+			document.querySelectorAll(".entrance-fade").forEach((el) => {
+				el.classList.add("visible");
+			});
+		}, 100);
+	});
+</script>
 
 <style>
 	.landing {
@@ -134,7 +267,7 @@ const {
 	.landing-text {
 		position: absolute;
 		left: 12%;
-		top: 40%;
+		top: 30%;
 		transform: translateY(-50%);
 		z-index: 10;
 		max-width: 500px;
@@ -155,10 +288,10 @@ const {
 	}
 
 	.title-my {
-		font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+		font-family: "Fredoka", "Comic Sans MS", cursive, sans-serif;
 		font-size: clamp(2.2rem, 5vw, 3.5rem);
 		font-weight: 500;
-		color: #2D8F6F;
+		color: #2d8f6f;
 		margin-left: 0.2em;
 		transform: rotate(-10deg);
 		display: inline-block;
@@ -166,19 +299,19 @@ const {
 	}
 
 	.title-portfolio {
-		font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+		font-family: "Fredoka", "Comic Sans MS", cursive, sans-serif;
 		font-size: clamp(4.5rem, 13vw, 8rem);
 		font-weight: 800;
-		color: #2D8F6F;
+		color: #2d8f6f;
 		text-transform: uppercase;
 		letter-spacing: -0.04em;
 		line-height: 0.85;
 	}
 
 	.landing-subtitle {
-		font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+		font-family: "Fredoka", "Comic Sans MS", cursive, sans-serif;
 		font-size: clamp(1rem, 2vw, 1.25rem);
-		color: #E8A54B;
+		color: #e8a54b;
 		font-weight: 500;
 		margin-top: 0.8rem;
 		margin: 0;
@@ -187,7 +320,7 @@ const {
 
 	/* Character Sammy - right side */
 	.sammy {
-		right:-5%;
+		right: -5%;
 		top: 48%;
 		transform: translateY(-50%);
 		width: clamp(520px, 70vw, 1050px);
@@ -259,13 +392,239 @@ const {
 			max-width: 300px;
 		}
 
-		.shape-1 { width: 140px; }
-		.shape-2 { width: 120px; }
-		.shape-4 { width: 80px; }
-		.shape-5 { width: 140px; }
-		.shape-6 { width: 100px; }
-		
-		.star-1 { width: 25px; }
-		.star-2 { width: 20px; }
+		.shape-1 {
+			width: 140px;
+		}
+		.shape-2 {
+			width: 120px;
+		}
+		.shape-4 {
+			width: 80px;
+		}
+		.shape-5 {
+			width: 140px;
+		}
+		.shape-6 {
+			width: 100px;
+		}
+
+		.star-1 {
+			width: 25px;
+		}
+		.star-2 {
+			width: 20px;
+		}
+	}
+
+	/* ===== INTERACTIVE ANIMATIONS ===== */
+
+	/* Floating animation for shapes */
+	.float-element {
+		--parallax-x: 0px;
+		--parallax-y: 0px;
+		transition: transform 0.3s ease-out;
+		transform: translate(var(--parallax-x), var(--parallax-y));
+		animation: float 6s ease-in-out infinite;
+	}
+
+	.shape-1 {
+		animation-delay: 0s;
+	}
+	.shape-2 {
+		animation-delay: 1s;
+	}
+	.shape-3 {
+		animation-delay: 2s;
+	}
+	.shape-4 {
+		animation-delay: 0.5s;
+	}
+	.shape-5 {
+		animation-delay: 1.5s;
+	}
+	.shape-6 {
+		animation-delay: 2.5s;
+	}
+
+	@keyframes float {
+		0%,
+		100% {
+			transform: translate(var(--parallax-x), var(--parallax-y))
+				translateY(0) rotate(0deg);
+		}
+		50% {
+			transform: translate(var(--parallax-x), var(--parallax-y))
+				translateY(-8px) rotate(2deg);
+		}
+	}
+
+	/* Pulsing stars animation */
+	.pulse-star {
+		animation:
+			pulse 2s ease-in-out infinite,
+			twinkle 4s ease-in-out infinite;
+	}
+
+	.star-1 {
+		animation-delay: 0s;
+	}
+	.star-2 {
+		animation-delay: 0.7s;
+	}
+	.star-3 {
+		animation-delay: 1.4s;
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
+		50% {
+			transform: scale(1.15);
+			opacity: 0.8;
+		}
+	}
+
+	@keyframes twinkle {
+		0%,
+		100% {
+			filter: brightness(1);
+		}
+		50% {
+			filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 200, 50, 0.6));
+		}
+	}
+
+	/* Entrance fade animation */
+	.entrance-fade {
+		opacity: 0;
+		transform: translateY(30px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.entrance-fade.visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* Hover grow effect */
+	.hover-grow {
+		transition: transform 0.3s ease;
+		cursor: pointer;
+	}
+
+	.hover-grow:hover {
+		transform: scale(1.03);
+	}
+
+	/* Sammy container for parallax */
+	.sammy-container {
+		position: absolute;
+		right: -5%;
+		top: 48%;
+		transform: translateY(-50%);
+		z-index: 5;
+		transition: transform 0.15s ease-out;
+		will-change: transform;
+	}
+
+	.sammy-container .sammy {
+		position: relative;
+		right: auto;
+		top: auto;
+		transform: none;
+		width: clamp(520px, 70vw, 1050px);
+		height: auto;
+	}
+
+	/* Scroll indicator */
+	.scroll-indicator {
+		position: absolute;
+		bottom: 30px;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+		z-index: 20;
+		animation: fadeInUp 1s ease-out 1.5s both;
+	}
+
+	.scroll-arrow {
+		width: 24px;
+		height: 24px;
+		border-right: 3px solid #00996a;
+		border-bottom: 3px solid #00996a;
+		transform: rotate(45deg);
+		animation: scrollBounce 1.5s ease-in-out infinite;
+	}
+
+	.scroll-text {
+		font-family: "Fredoka", cursive;
+		font-size: 0.85rem;
+		color: #00996a;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+	}
+
+	@keyframes scrollBounce {
+		0%,
+		100% {
+			transform: rotate(45deg) translateY(0);
+			opacity: 1;
+		}
+		50% {
+			transform: rotate(45deg) translateY(8px);
+			opacity: 0.5;
+		}
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateX(-50%) translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(-50%) translateY(0);
+		}
+	}
+
+	/* Responsive adjustments for sammy container */
+	@media (max-width: 1200px) {
+		.sammy-container {
+			right: 0;
+		}
+		.sammy-container .sammy {
+			width: clamp(300px, 38vw, 450px);
+		}
+	}
+
+	@media (max-width: 900px) {
+		.sammy-container {
+			right: 50%;
+			top: auto;
+			bottom: 3%;
+			transform: translateX(50%);
+		}
+		.sammy-container .sammy {
+			width: clamp(280px, 60vw, 380px);
+		}
+		.scroll-indicator {
+			display: none;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.sammy-container .sammy {
+			width: 70%;
+			max-width: 300px;
+		}
 	}
 </style>

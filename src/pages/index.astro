@@ -1,109 +1,120 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Landing from '../components/Landing.astro';
-import Introduction from '../components/Introduction.astro';
-import ContentCard from '../components/ContentCard.astro';
-import ProjectSection from '../components/ProjectSection.astro';
-import Models3DSection from '../components/Models3DSection.astro';
-import ThreeViewer from '../components/ThreeViewer.astro';
-import MarmosetViewer from '../components/MarmosetViewer.astro';
-import Footer from '../components/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Header from "../components/Header.astro";
+import Landing from "../components/Landing.astro";
+import Introduction from "../components/Introduction.astro";
+import ContentCard from "../components/ContentCard.astro";
+import ProjectSection from "../components/ProjectSection.astro";
+import Models3DSection from "../components/Models3DSection.astro";
+import ThreeViewer from "../components/ThreeViewer.astro";
+import MarmosetViewer from "../components/MarmosetViewer.astro";
+import Footer from "../components/Footer.astro";
 
 // Datos de ejemplo para proyectos - personaliza según tu contenido
 const videojuegosProjects = [
 	{
-		id: 'game-1',
-		title: 'Proyecto Videojuego 1',
-		description: 'Descripción breve del proyecto de videojuego.',
-		image: '/images/placeholder.jpg',
-		tags: ['Unity', 'C#', '3D'],
-		link: '#'
+		id: "game-1",
+		title: "Proyecto Videojuego 1",
+		description: "Descripción breve del proyecto de videojuego.",
+		image: "/images/placeholder.jpg",
+		tags: ["Unity", "C#", "3D"],
+		link: "#",
 	},
 	// Agrega más proyectos aquí
 ];
 
 const modelos3dProjects = [
 	{
-		id: 'model-1',
-		title: 'Modelo 3D 1',
-		description: 'Descripción del modelo 3D.',
-		image: '/images/placeholder.jpg',
-		tags: ['Blender', 'Substance Painter'],
-		link: '#'
+		id: "model-1",
+		title: "Modelo 3D 1",
+		description: "Descripción del modelo 3D.",
+		image: "/images/placeholder.jpg",
+		tags: ["Blender", "Substance Painter"],
+		link: "#",
 	},
 	// Agrega más proyectos aquí
 ];
 
 const ilustracionesProjects = [
 	{
-		id: 'illust-1',
-		title: 'Ilustración 1',
-		description: 'Descripción de la ilustración.',
-		image: '/images/placeholder.jpg',
-		tags: ['Digital Art', 'Concept Art'],
-		link: '#'
+		id: "illust-1",
+		title: "Ilustración 1",
+		description: "Descripción de la ilustración.",
+		image: "/images/placeholder.jpg",
+		tags: ["Digital Art", "Concept Art"],
+		link: "#",
 	},
 	// Agrega más proyectos aquí
 ];
 ---
 
 <Layout title="Samantha Gámez Meade | Game Artist">
-	<!-- Header flotante con navegación -->
-	<Header />
-	
+	<!-- Navbar fija verde -->
+	<Navbar />
+
 	<!-- Landing Page -->
-	<Landing 
-		title="Samantha Gámez Meade"
-		subtitle="Game Artist | Stylized 3D & 2D | Environments, Props & Characters"
-		ctaText="Ver mi trabajo"
-		ctaLink="#categories"
+	<Landing
+		name="Samantha Gámez Meade"
+		role="Game Artist | Stylized 3D & 2D | Environments, Props & Characters"
 	/>
-	
+
 	<!-- Introducción / Sobre mí -->
-	<Introduction 
+	<Introduction
 		title="Sobre Mí"
 		description="Artista de videojuegos con pasión por todo el proceso de creación de un juego. Me entusiasma diseñar y crear assets que puedan ser utilizados dentro de un entorno interactivo. Me especializo principalmente en props y personajes. También trabajo con arte 2D y diseño de personajes, integrando texturizado y diseño de juego para crear mundos equilibrados y visualmente atractivos."
 		highlights={[
-			{ icon: "01", title: "Props & Characters", description: "Especialidad principal" },
-			{ icon: "02", title: "Stylized 3D", description: "Cute, cozy, low-poly" },
-			{ icon: "03", title: "2D & UI", description: "Diseño de personajes e interfaz" },
+			{
+				icon: "01",
+				title: "Props & Characters",
+				description: "Especialidad principal",
+			},
+			{
+				icon: "02",
+				title: "Stylized 3D",
+				description: "Cute, cozy, low-poly",
+			},
+			{
+				icon: "03",
+				title: "2D & UI",
+				description: "Diseño de personajes e interfaz",
+			},
 		]}
 	/>
-	
+
 	<!-- Cards de Categorías -->
-	<ContentCard 
+	<ContentCard
 		title="Contents"
 		categories={[
-			{ id: 'videojuegos', title: 'Videojuegos', number: '01' },
-			{ id: 'modelos3d', title: 'Modelos 3D', number: '02' },
-			{ id: 'ilustraciones', title: 'Ilustraciones', number: '03' },
-			{ id: 'cv', title: 'CV', number: '04' },
+			{ id: "videojuegos", title: "Videojuegos", number: "01" },
+			{ id: "modelos3d", title: "Modelos 3D", number: "02" },
+			{ id: "ilustraciones", title: "Ilustraciones", number: "03" },
+			{ id: "cv", title: "CV", number: "04" },
 		]}
 	/>
-	
+
 	<!-- Seccion Videojuegos -->
-	<ProjectSection 
+	<ProjectSection
 		id="videojuegos"
 		title="Videojuegos"
-		color="#6366f1"
+		color="#00996a"
 		projects={videojuegosProjects}
 	/>
-	
+
 	<!-- Seccion Modelos 3D con Three.js -->
 	<section class="section" id="modelos3d">
 		<div class="container">
 			<h2 class="section-title">Modelos 3D</h2>
-			
-			<ThreeViewer 
+
+			<ThreeViewer
 				src="/models/Sam.glb"
 				title="Sam - Personaje"
 				description="Modelo 3D estilizado de personaje"
 				height="600px"
 				autoRotate={true}
 			/>
-			
-			<MarmosetViewer 
+
+			<MarmosetViewer
 				src="/models/scene.mview"
 				title="Librero"
 				description="Modelo 3D con materiales PBR"
@@ -111,26 +122,23 @@ const ilustracionesProjects = [
 			/>
 		</div>
 	</section>
-	
+
 	<!-- Seccion Ilustraciones -->
-	<ProjectSection 
+	<ProjectSection
 		id="ilustraciones"
 		title="Ilustraciones"
-		color="#14b8a6"
+		color="#ff6270"
 		projects={ilustracionesProjects}
 	/>
-	
+
 	<!-- Seccion CV -->
-	<ProjectSection 
+	<ProjectSection
 		id="cv"
 		title="Curriculum Vitae"
-		color="#f59e0b"
+		color="#E8A54B"
 		projects={[]}
 	/>
-	
+
 	<!-- Footer -->
-	<Footer 
-		name="Samantha Gámez Meade"
-		email="contacto@ejemplo.com"
-	/>
+	<Footer name="Samantha Gámez Meade" email="contacto@ejemplo.com" />
 </Layout>
